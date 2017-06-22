@@ -1,6 +1,6 @@
-local balot = require "balot"
+local blt = require "blt"
 
-local t = balot( io.stdin:read("*a") )
+local t = blt( io.stdin:read("*a") )
 
 --print(require"mini.tprint.better"(t, {inline=false}))
 
