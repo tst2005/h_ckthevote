@@ -31,7 +31,14 @@ local balotgrammar = re.compile[[
   titleline <- '"' { [^"]+ } '"' comment* %nl
 ]]
 
+local function workaround(t)
+	local c = t.canditates
+	local title = c[#c] 
+	t.title = title
+	table.remove(c, #c)
+	return t
+end
 
 return function(data)
-	return balotgrammar:match( data )
+	return workaround(balotgrammar:match( data ))
 end
