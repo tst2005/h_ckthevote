@@ -1,18 +1,18 @@
 local re = require"re"
 
 local balotgrammar = re.compile[[
-  balot <- {| head withdrawns* votes+ candidates  |}
+  balot <- {| head withdrawns* votes+ candidates title |}
 
   head <- {:head: headline :}
   headline <- {| candidates_count space+ seats_count |} comment* %nl
 
-  comment <- space* "#" [^%nl]*
+  comment <- %s* "#" [^%nl]*
 
   candidates_count <- {:candidates: {num} :}
   seats_count <- {:seats: {num} :}
 
   num <- [0-9]+
-  space <- " "
+  space <- [\t ]
 
   negnum <- "-" num
 
@@ -24,21 +24,13 @@ local balotgrammar = re.compile[[
   voteitem <- { dupvote } space*
   dupvote <- "-" / num "=" num / num
 
-  candidates <- {:canditates: {| candidate+ |} :}
-  candidate <- '"' { [^"]+ } '"' comment* %nl
+  candidates <- {:candidates: {| candidate+ |} :}
+  candidate <- '"' { [^"]+ } '"' comment^-1 %nl+ & .
 
   title <- {:title: titleline :}
-  titleline <- '"' { [^"]+ } '"' comment* %nl
+  titleline <- '"' { [^"]+ } '"' comment^-1 %nl* & !.
 ]]
 
-local function workaround(t)
-	local c = t.canditates
-	local title = c[#c] 
-	t.title = title
-	table.remove(c, #c)
-	return t
-end
-
 return function(data)
-	return workaround(balotgrammar:match( data ))
+	return balotgrammar:match( data )
 end
