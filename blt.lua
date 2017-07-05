@@ -1,5 +1,7 @@
 local re = require"re"
 
+-- https://www.opavote.com/help/overview#blt-file-format
+
 local balotgrammar = re.compile[[
   balot <- {| head withdrawns* votes+ candidates title |}
 
